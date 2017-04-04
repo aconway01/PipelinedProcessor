@@ -66,12 +66,25 @@ reg `IMMED12 immed12;
 
 reg `STATE s = `Start;
 
-always @(reset) begin
-	halt = 0;
-	pc = 0;
-	s <= `Start;
-	$readmemh0(regfile);
-	$readmemh1(memory);
-end
+	always @(reset) begin
+		halt = 0;
+		pc = 0;
+		s <= `Start;
+		$readmemh0(regfile);
+		$readmemh1(memory);
+	end
+	
+	always @(posedge clk) begin
+		
+	end
+
+	always @(posedge clk) begin
+	end
+
+	always @(posedge clk) begin
+	end
+
+	always @(posedge clk) begin
+	end
 
 endmodule
