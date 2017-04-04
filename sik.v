@@ -1,10 +1,10 @@
 `define WORD		[15:0]
 `define OPCODE		[3:0]
 `define IMMED12		[11:0]
-`define STATE		[6:0]
+`define STATE		[4:0]
 `define PRE		[3:0]
 `define REGSIZE		[511:0]	//from provided
-`define HALFWORD	[7;0]	//
+`define HALFWORD	[7:0]	//
 `define MEMSIZE		[65535:0]//
 
 //Normal curOPs
@@ -37,6 +37,7 @@
 `define Start   5'b11111
 `define Start1  5'b11110
 
+`define NOOP    6'b000000
 
 module pipelined(halt, reset, clk)
 input reset, clk;
@@ -63,6 +64,11 @@ reg `WORD curOP1;
 reg `WORD curOP2;
 
 reg `IMMED12 immed12;
+	
+reg `WORD src;
+reg `WORD dest;
+	
+reg checkNOOP;
 
 reg `STATE s = `Start;
 
