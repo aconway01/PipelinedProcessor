@@ -100,7 +100,7 @@ reg reset = 0;
 reg clk = 0;
 wire halted;
 integer i = 0;
-processor PE(halted, reset, clk);
+pipelined PE(halted, reset, clk);
 initial begin
     $dumpfile;
     $dumpvars(0, PE);
