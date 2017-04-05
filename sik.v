@@ -43,6 +43,19 @@ module decode(opOut,regDest,opIn,ir);
 endmodule
 
 module alu(out,op,in1,in2);
+output reg 'WORD out;
+input wire 'OPCODE op;
+input wire 'WORD in1, in2;
+
+always @(op, in1, in2) begin
+	case(op)
+		'OPadd: begin out = in1 + in2; end
+		'OPand: begin out = in1 & in2; end
+		'OPor: begin out = in1 | in2; end
+		'OPxor: begin out = in1 ^ in2; end
+		default: begin out = in1; end
+	endcase
+end
 endmodule
 
 module pipelined(halt, reset, clk);
