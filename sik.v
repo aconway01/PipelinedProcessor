@@ -94,3 +94,23 @@ reg `STATE s = `Start;
 	end
 
 endmodule
+
+module testbench;
+reg reset = 0;
+reg clk = 0;
+wire halted;
+integer i = 0;
+processor PE(halted, reset, clk);
+initial begin
+    $dumpfile;
+    $dumpvars(0, PE);
+    #10 reset = 1;
+    #10 reset = 0;
+    while (!halted && (i < 200)) begin
+        #10 clk = 1;
+        #10 clk = 0;
+        i=i+1;
+    end
+    $finish;
+end
+endmodule
