@@ -39,7 +39,13 @@
 
 `define NOOP    6'b000000
 
-module pipelined(halt, reset, clk)
+module decode(opOut,regDest,opIn,ir);
+endmodule
+
+module alu(out,op,in1,in2);
+endmodule
+
+module pipelined(halt, reset, clk);
 input reset, clk;
 
 output reg halt;
