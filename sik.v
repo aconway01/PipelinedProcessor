@@ -40,6 +40,14 @@
 `define NOOP    6'b000000
 
 module decode(opOut,regDest,opIn,ir);
+output reg `OPCODE opOut;
+output reg `WORD regDest;
+input wire `OP opIn;
+input `WORD ir;
+	
+always@(opIn, ir) begin
+	if	
+end
 endmodule
 
 module alu(out,op,in1,in2);
