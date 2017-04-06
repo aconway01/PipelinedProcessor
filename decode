@@ -1,0 +1,21 @@
+reg `WORD srcval;
+reg `WORD destval;
+
+
+always@(*) if (curOP != 6'b111111) srcval = sp;
+			else srcval = 0;
+
+always@(*) if (curOP != 6'b111111) destval = sp-1;
+			else destval = 0;
+//IN PROCESSOR^^^
+
+
+module decode(opin, src, dst, opout)
+	output reg `WORD opout;
+	output reg `WORD dst;
+	output reg `WORD src;
+	input wire `OPCODE opin;
+
+	always @(opin) begin
+
+	end
