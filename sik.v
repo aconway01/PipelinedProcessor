@@ -111,11 +111,11 @@ reg `STATE s = `Start;
 	
 	always@(*) begin curOP1 <= memory[pc1]; curOP2 <= memory[pc2]; pc1 = pc1 +1; pc2 = pc2 + 1; end
 	
-	always@(*) begin if (curOP1 != 6'b111111) srcval = sp;
+	always@(*) begin if (curOP1 != 6'b111111) srcval = sp1;
 		else srcval = 0;
 	end
 
-	always@(*) begin if (curOP1 != 6'b111111) destval = sp-1;
+	always@(*) begin if (curOP1 != 6'b111111) destval = sp1-1;
 		else destval = 0;
 	end
 		
