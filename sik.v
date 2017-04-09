@@ -93,8 +93,8 @@ reg `WORD curOP2;
 
 reg `IMMED12 immed12;
 	
-reg `WORD src;
-reg `WORD dest;
+reg `WORD srcval;
+reg `WORD destval;
 	
 reg checkNOOP;
 
@@ -102,20 +102,23 @@ reg `STATE s = `Start;
 
 	always @(reset) begin
 		halt = 0;
-		pc1 = 0;
+		pc1 = 1;
                 pc2 = 0;
 		s <= `Start;
 		$readmemh0(regfile);
 		$readmemh1(memory);
 	end
 	
-	always @(posedge clk) begin
+	always@(*) begin curOP1 <= memory[pc1]; curOP2 <= memory[pc2]; pc1 = pc1 +1; pc2 = pc2 + 1; end
+	
+	always@(*) begin if (curOP1 != 6'b111111) srcval = sp;
+		else srcval = 0;
+	end
+
+	always@(*) begin if (curOP1 != 6'b111111) destval = sp-1;
+		else destval = 0;
+	end
 		
-	end
-
-	always @(posedge clk) begin
-	end
-
 	always @(posedge clk) begin
 	end
 
