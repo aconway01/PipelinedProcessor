@@ -42,25 +42,25 @@
 module decode(opOut,regDest,opIn,ir);
 output reg `OPCODE opOut;
 output reg `WORD regDest;
-input wire `OP opIn;
+input wire `OPCODE opIn;
 input `WORD ir;
 	
 always@(opIn, ir) begin
-	if	
+		
 end
 endmodule
 
 module alu(out,op,in1,in2);
-output reg 'WORD out;
-input wire 'OPCODE op;
-input wire 'WORD in1, in2;
+output reg `WORD out;
+input wire `OPCODE op;
+input wire `WORD in1, in2;
 
 always @(op, in1, in2) begin
 	case(op)
-		'OPadd: begin out = in1 + in2; end
-		'OPand: begin out = in1 & in2; end
-		'OPor: begin out = in1 | in2; end
-		'OPxor: begin out = in1 ^ in2; end
+		`OPadd: begin out = in1 + in2; end
+		`OPand: begin out = in1 & in2; end
+		`OPor: begin out = in1 | in2; end
+		`OPxor: begin out = in1 ^ in2; end
 		default: begin out = in1; end
 	endcase
 end
@@ -101,7 +101,8 @@ reg `STATE s = `Start;
 
 	always @(reset) begin
 		halt = 0;
-		pc = 0;
+		pc1 = 0;
+                pc2 = 0;
 		s <= `Start;
 		$readmemh0(regfile);
 		$readmemh1(memory);
