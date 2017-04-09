@@ -37,7 +37,7 @@
 `define Start   5'b11111
 `define Start1  5'b11110
 
-`define NOOP    6'b000000
+`define NOOP    6'b111111
 
 module decode(opin, src, dst, opout);
 	output reg `WORD opout;
@@ -104,13 +104,15 @@ reg `STATE s = `Start;
 		halt = 0;
 		pc1 = 0;
                 pc2 = 1;
+                curOP1 = `NOOP;
+                curOP2 = `NOOP;
 		s <= `Start;
 		$readmemh0(memory);
 		$readmemh1(regfile);
 	end
 
  
-	//Instruction Fetching
+	//Instruction fetching!
 	always@(posedge clk) if (!halt) begin curOP1 <= memory[pc1]; curOP2 <= memory[pc2]; pc1 = pc1 +2; pc2 = pc2 + 2; end
 	
 	always@(*) begin if (curOP1 != 6'b111111) srcval = sp1;
