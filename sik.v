@@ -105,13 +105,13 @@ reg `STATE s = `Start;
 		pc1 = 0;
                 pc2 = 1;
 		s <= `Start;
-		$readmemh0(regfile);
-		$readmemh1(memory);
+		$readmemh0(memory);
+		$readmemh1(regfile);
 	end
 
  
 	
-	always@(posedge clk) if (!halt) begin curOP1 <= regfile[pc1]; curOP2 <= regfile[pc2]; pc1 = pc1 +1; pc2 = pc2 + 1; end
+	always@(posedge clk) if (!halt) begin curOP1 <= memory[pc1]; curOP2 <= memory[pc2]; pc1 = pc1 +2; pc2 = pc2 + 2; end
 	
 	always@(*) begin if (curOP1 != 6'b111111) srcval = sp1;
 		else srcval = 0;
