@@ -110,7 +110,7 @@ reg `STATE s = `Start;
 	end
 
  
-	
+	//Instruction Fetching
 	always@(posedge clk) if (!halt) begin curOP1 <= memory[pc1]; curOP2 <= memory[pc2]; pc1 = pc1 +2; pc2 = pc2 + 2; end
 	
 	always@(*) begin if (curOP1 != 6'b111111) srcval = sp1;
