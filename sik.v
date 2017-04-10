@@ -37,18 +37,18 @@
 
 `define NOOP    6'b111111
 
-module decode(opin, src, dst, opout, sp, spOut);
+module decode(opin, src, dst, opout, sp, spOut, pre);
 input wire `WORD opin;
 output reg `WORD src;
 output reg `WORD dst;
 output reg `WORD opout;
 output reg `HALFWORD spOut;
 input wire `HALFWORD sp;
+output reg `PRE pre;
 
 
 always@(opin) begin
-$display("HELLO!");
-//taken from pipe.v
+
    case (opin[15:12])
       `NOARG: begin
 
@@ -58,18 +58,65 @@ $display("HELLO!");
                dst = sp +1;
                src = sp;
                spOut = sp+1;
+               pre = 0;
            end
-           `OPload: begin opout =  opin[3:0]; dst = sp; src = `NOOP; spOut = sp; end
-           `OPret: begin opout =  opin[3:0]; src = sp; spOut = sp -1; dst = `NOOP; end
-           `OPtest: begin opout = opin[3:0]; src = sp; spOut = sp -1; dst = `NOOP; end
+           `OPload: begin opout =  opin[3:0]; dst = sp; src = `NOOP; spOut = sp; pre = 0; end
+           `OPret: begin opout =  opin[3:0]; src = sp; spOut = sp -1; dst = `NOOP; pre = 0; end
+           `OPtest: begin opout = opin[3:0]; src = sp; spOut = sp -1; dst = `NOOP; pre = 0; end
            default: begin  
                opout = opin[3:0];
                dst = sp-1;
                src = sp;
                spOut = sp-1;
+               pre = 0;
                end
        endcase
        end
+
+       `OPcall: begin
+               opout = opin[15:12];
+               dst = sp+1;
+               src = `NOOP;
+               spOut = sp+1;
+               pre = 0;
+        end
+
+        `OPget: begin
+               opout = opin[15:12];
+               dst = sp+1;
+               src = sp-opin[11:0];
+               spOut = sp+1;
+               pre = 0;
+        end
+
+       //sets sp to 0 if the immediate is greater than sp.
+        `OPpop: begin
+               opout = opin[15:12];
+               dst = `NOOP;
+               src = `NOOP;
+               if(sp < opin[11:0]) begin
+               spOut = sp-opin[11:0];
+               end
+               else begin spOut = 0; end
+               pre = 0;
+        end
+
+        // PRE DO HERE
+        `OPpre: begin
+                opout = [15:12];
+                dst =`NOOP;
+                src = `NOOP;
+                spOut = sp;
+                pre = [3:0];
+        end
+
+        `OPpush: begin
+               opout = opin[3:0];
+               dst = sp+1;
+               src = `NOOP;
+               spOut = sp+1;
+        end
+     
               
       default: begin opout = `NOOP; src = `NOOP; dst= `NOOP; spOut = sp; end
     endcase
@@ -184,7 +231,6 @@ wire `HALFWORD spout = -1;
 	always @(posedge clk) begin
 	end
 
-	//hello
 	always @(posedge clk) begin
            if(halt1 && halt2) begin
                halt <=1;
