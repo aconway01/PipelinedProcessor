@@ -183,6 +183,8 @@ wire `WORD d1value;
 	
 reg checkNOOP;
 
+reg `PRE preReg;
+
 wire `PRE preOut;
 wire `WORD res;
 
@@ -232,10 +234,13 @@ wire `HALFWORD spout = -1;
 	always@(*) begin if (curOP1 != 6'b111111) regfile[destval] =res ;
 		else destval = d1value;
 	end
+        
+       //set the preload
+        always@(*) begin if( preOut != 0) begin preReg = preOut; preload1 = 1; end else begin preload1 = 0; end  end
 		
        //register writing
 	always @(posedge clk) if(!halt1 && !halt2) begin
-            if( destval 
+     
 	end
 
 	always @(posedge clk) begin
