@@ -192,6 +192,7 @@ reg `WORD counter= 0;
 wire `HALFWORD spin =-1;
 wire `HALFWORD spout = -1;
 	always @(reset) begin
+		halt = 0;
                 halt1 = 0;
                 halt2 = 0;
 		pc1 = 0;
