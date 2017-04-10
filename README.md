@@ -3,7 +3,9 @@
 
 Robert Conway, Ted Ferguson, Katie Long
 
-Abstract — pipelining and hyperthreading to implement a multi cycle processor design.
+# Abstract
+
+Pipelining and hyperthreading to implement a multi cycle processor design.
 
 # I.	Introduction
 
@@ -62,6 +64,10 @@ Despite the issues with multithreading and value forwarding, much of the process
 # REFERENCES:
 
 In sik.v: the memory writing stage (stage 4) was provided by the TA and adapted to fit the implementation.
+
 In sik.v:  The jump decoding that is present in the decode stage is adapted from the logic found at http://aggregate.org/EE480/Sick.v
-In sik.v: The implementation of the processor was heavily influenced by the code found at http://aggregate.org/EE480/pipe.v . Specifically, the always@(*) blocks were adapted to fit this implementation.
+
+In sik.v: The implementation of the processor was heavily influenced by the code found at http://aggregate.org/EE480/pipe.v . 
+Specifically, the always@(*) blocks were adapted to fit this implementation.
+
 In sik.aik: The aik spec comes from the Assignment 2 specification created by Katie Long, Natsagdorj Baljinnyam, Stephanie McCormick.
