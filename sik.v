@@ -103,11 +103,11 @@ always@(opin) begin
 
         // PRE DO HERE
         `OPpre: begin
-                opout = [15:12];
+                opout = opin[15:12];
                 dst =`NOOP;
                 src = `NOOP;
                 spOut = sp;
-                pre = [3:0];
+                pre = opin[3:0];
         end
 
         `OPpush: begin
@@ -183,6 +183,9 @@ wire `WORD d1value;
 	
 reg checkNOOP;
 
+wire `PRE preOut;
+wire `WORD res;
+
 reg `WORD counter= 0;
 wire `HALFWORD spin =-1;
 wire `HALFWORD spout = -1;
@@ -217,7 +220,8 @@ wire `HALFWORD spout = -1;
            counter <= counter + 1;
         end
 
-        decode dd(s1op, s1value, d1value, opo, spin, spout);
+        decode dd(s1op, s1value, d1value, opo, spin, spout, preOut);
+        alu aa(opo, s1value, d1value, res);
 
 	
 	always@(*) begin if (curOP1 != 6'b111111) srcval = sp1;
