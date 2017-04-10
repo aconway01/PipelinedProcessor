@@ -70,9 +70,7 @@ $display("HELLO!");
                end
        endcase
        end
-       
-       `
-       
+              
       default: begin opout = `NOOP; src = `NOOP; dst= `NOOP; spOut = sp; end
     endcase
   end
@@ -139,8 +137,6 @@ wire `WORD s1value;
 wire `WORD d1value;
 	
 reg checkNOOP;
-
-reg `STATE s = `Start;
 
 reg `WORD counter= 0;
 reg `HALFWORD spin =-1;
