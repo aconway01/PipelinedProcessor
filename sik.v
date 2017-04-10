@@ -189,6 +189,8 @@ reg `PRE preReg;
 
 wire `PRE preOut;
 wire `WORD res;
+	
+reg thread_id;
 
 //for whatever torf we are checking
 wire torfIP;
@@ -220,11 +222,13 @@ wire `HALFWORD spout = -1;
         always@(posedge clk) begin if (!halt1 && !halt2) begin
              if(((counter % 2) === 0) && !halt1) begin
                  s1op <= curOP1;
-                 pc <= pc1;       
+                 pc <= pc1;  
+		 thread_id = 0;
              end
              else if (!halt2) begin
                  s1op <= curOP2;
                  pc <= pc2;
+		 thread_id = 1;
              end
            end
            counter <= counter + 1;
@@ -260,9 +264,10 @@ wire `HALFWORD spout = -1;
         always@(*) begin if( preOut != 0) begin preReg = preOut; preload1 = 1; end else begin preload1 = 0; end  end
 		
        //memory writing
-	always @(posedge clk) if(!halt1 && !halt2) begin
-                 
-	end
+	always @(posedge clk) if (!halt) begin
+		if (dstval != 0) regfile[{thread_id,dstval}] <= s1cval;
+		end
+	endmodule
 
 	always @(posedge clk) begin
            if(halt1 && halt2) begin
