@@ -74,9 +74,7 @@ $display("HELLO!");
       default: begin opout = `NOOP; src = `NOOP; dst= `NOOP; spOut = sp; end
     endcase
   end
- 
 
-end
 endmodule
 
 module alu(opin, in1, in2, out);
@@ -139,8 +137,8 @@ wire `WORD d1value;
 reg checkNOOP;
 
 reg `WORD counter= 0;
-reg `HALFWORD spin =-1;
-reg `HALFWORD spout = -1;
+wire `HALFWORD spin =-1;
+wire `HALFWORD spout = -1;
 	always @(reset) begin
                 halt1 = 0;
                 halt2 = 0;
