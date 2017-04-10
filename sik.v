@@ -54,19 +54,19 @@ $display("HELLO!");
 
        case(opin[3:0]) 
           `OPdup: begin  
-               opout = {8'b00000000, opin[3:0]};
+               opout = opin[3:0];
                dst = sp +1;
                src = sp;
                spOut = sp+1;
            end
-           `OPload: begin opout = {8'b00000000, opin[3:0]}; dst = sp; src = `NOOP; spOut = sp; end
-           `OPret: begin opout = {8'b00000000, opin[3:0]}; src = sp; spOut = sp -1; dst = `NOOP; end
-           `OPtest: begin opout = {8'b00000000, opin[3:0]}; src = sp; spOut = sp -1; dst = `NOOP; end
+           `OPload: begin opout =  opin[3:0]; dst = sp; src = `NOOP; spOut = sp; end
+           `OPret: begin opout =  opin[3:0]; src = sp; spOut = sp -1; dst = `NOOP; end
+           `OPtest: begin opout = opin[3:0]; src = sp; spOut = sp -1; dst = `NOOP; end
            default: begin  
-               opout = {8'b00000000, opin[3:0]};
+               opout = opin[3:0];
                dst = sp-1;
                src = sp;
-               spOut = sp-1
+               spOut = sp-1;
                end
        endcase
        end
