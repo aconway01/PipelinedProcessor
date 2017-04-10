@@ -34,17 +34,50 @@
 
 `define NOARG   4'b0000
 
-`define Start   5'b11111
-`define Start1  5'b11110
 
 `define NOOP    6'b111111
 
-module decode(opin, src, dst, opout);
+module decode(opin, src, dst, opout, sp, spOut);
 input wire `WORD opin;
 output reg `WORD src;
 output reg `WORD dst;
 output reg `WORD opout;
+output reg `HALFWORD spOut;
+input wire `HALFWORD sp;
 
+
+always@(opin) begin
+$display("HELLO!");
+//taken from pipe.v
+   case (opin[15:12])
+      `NOARG: begin
+
+       case(opin[3:0]) 
+          `OPdup: begin  
+               opout = {8'b00000000, opin[3:0]};
+               dst = sp +1;
+               src = sp;
+               spOut = sp+1;
+           end
+           `OPload: begin opout = {8'b00000000, opin[3:0]}; dst = sp; src = `NOOP; spOut = sp; end
+           `OPret: begin opout = {8'b00000000, opin[3:0]}; src = sp; spOut = sp -1; dst = `NOOP; end
+           `OPtest: begin opout = {8'b00000000, opin[3:0]}; src = sp; spOut = sp -1; dst = `NOOP; end
+           default: begin  
+               opout = {8'b00000000, opin[3:0]};
+               dst = sp-1;
+               src = sp;
+               spOut = sp-1
+       endcase
+       end
+       
+       `
+       
+      default: begin opout = `NOOP; src = `NOOP; dst= `NOOP; spOut = sp; end
+    endcase
+  end
+ 
+
+end
 endmodule
 
 module alu(opin, in1, in2, out);
@@ -108,8 +141,11 @@ reg checkNOOP;
 
 reg `STATE s = `Start;
 
+reg `WORD counter= 0;
+reg `HALFWORD spin =-1;
+reg `HALFWORD spout = -1;
 	always @(reset) begin
-		halt1 = 0;
+                halt1 = 0;
                 halt2 = 0;
 		pc1 = 0;
                 pc2 = 1;
@@ -117,35 +153,36 @@ reg `STATE s = `Start;
                 curOP2 = `NOOP;
                 s1op = 0;
                 s2op = 0;
-		s <= `Start;
 		$readmemh0(memory);
 		$readmemh1(regfile);
 	end
-
-        decode dd(s1op, s1value, d1value, opo);
+ 
 
         //Instruction fetching!
 	always@(posedge clk) begin 
-              if (!halt1 && !halt2) begin curOP1 <= memory[pc1]; curOP2 <= memory[pc2]; pc1 <= pc1 +2; pc2 <= pc2 + 2; end
+              if (!halt1 && !halt2) begin 
+              curOP1 <= memory[pc1]; curOP2 <= memory[pc2]; pc1 <= pc1 +2; pc2 <= pc2 + 2;  end
         end
 
         always@(posedge clk) begin if (!halt1 && !halt2) begin
-             if(((clk % 2) === 0) && !halt1) begin
+             if(((counter % 2) === 0) && !halt1) begin
                  s1op <= curOP1;       
              end
              else if (!halt2) begin
                  s1op <= curOP2;
              end
            end
+           counter <= counter + 1;
         end
 
+        decode dd(s1op, s1value, d1value, opo, spin, spout);
 
 	
-	always@(*) begin if (curOP1 != 6'b111111) srcval = s1value;
+	always@(*) begin if (curOP1 != 6'b111111) srcval = sp1;
 		else srcval = 0;
 	end
 
-	always@(*) begin if (curOP1 != 6'b111111) destval = d1value;
+	always@(*) begin if (curOP1 != 6'b111111) destval = sp1 -1;
 		else destval = 0;
 	end
 		
