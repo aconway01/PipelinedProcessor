@@ -221,18 +221,21 @@ wire `HALFWORD spout = -1;
         end
 
         decode dd(s1op, s1value, d1value, opo, spin, spout, preOut);
-        alu aa(opo, s1value, d1value, res);
+        alu aa(opo[3:0], regfile[s1value], regfile[d1value], res);
 
-	
-	always@(*) begin if (curOP1 != 6'b111111) srcval = sp1;
-		else srcval = 0;
-	end
+	//set the source as the result. Otherwise, move forward for module 4.
+	always@(*) begin if (curOP1 != 6'b111111) srcval = res;
+		else srcval = s1value;
+	end 
 
-	always@(*) begin if (curOP1 != 6'b111111) destval = sp1 -1;
-		else destval = 0;
+        //set the destination as the result. Otherwise, move forward for module 4.
+	always@(*) begin if (curOP1 != 6'b111111) regfile[destval] =res ;
+		else destval = d1value;
 	end
 		
-	always @(posedge clk) begin
+       //register writing
+	always @(posedge clk) if(!halt1 && !halt2) begin
+            if( destval 
 	end
 
 	always @(posedge clk) begin
