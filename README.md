@@ -1,9 +1,9 @@
 # Pipelining A SIK Machine
-# Implementor’s notes
+## Implementor’s notes
 
 Robert Conway, Ted Ferguson, Katie Long
 
-# Abstract
+## Abstract
 
 Pipelining and hyperthreading to implement a multi cycle processor design.
 
