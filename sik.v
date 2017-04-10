@@ -63,7 +63,7 @@ module alu(opin, in1, in2, out);
 			`OPsub: begin out = in1 - in2; end
 			default: begin out = in1; end
 		endcase
-end
+       end
 
 endmodule
 
@@ -131,18 +131,18 @@ reg `STATE s = `Start;
              else if (!halt2) begin
                  s1op <= curOP2;
              end
-        end
+           end
         end
 
 	//Instruction fetching!
-	always@(posedge clk) if (!halt1 && !halt2) begin curOP1 <= memory[pc1]; curOP2 <= memory[pc2]; pc1 = pc1 +2; pc2 = pc2 + 2; end
+	always@(posedge clk) if (!halt1 && !halt2) begin curOP1 <= memory[pc1]; curOP2 <= memory[pc2]; pc1 <= pc1 +2; pc2 <= pc2 + 2; end
 	
-	always@(*) begin if (curOP1 != 6'b111111) srcval = sp1;
-		else srcval = 0;
+	always@(*) begin if (curOP1 != 6'b111111) srcval <= sp1;
+		else srcval <= 0;
 	end
 
-	always@(*) begin if (curOP1 != 6'b111111) destval = sp1-1;
-		else destval = 0;
+	always@(*) begin if (curOP1 != 6'b111111) destval <= sp1-1;
+		else destval <= 0;
 	end
 		
 	always @(posedge clk) begin
