@@ -184,6 +184,7 @@ wire `HALFWORD spout = -1;
 	always @(posedge clk) begin
 	end
 
+	//hello
 	always @(posedge clk) begin
            if(halt1 && halt2) begin
                halt <=1;
