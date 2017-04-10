@@ -67,6 +67,7 @@ $display("HELLO!");
                dst = sp-1;
                src = sp;
                spOut = sp-1
+               end
        endcase
        end
        
