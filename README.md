@@ -11,9 +11,12 @@ For this project the SIK design was to be altered to include pipelining done wit
 
 The two instruction files are inputted through VMEM0 and VMEM1 after being assembled. Just like in the previous design, the opcodes are stored in a memory array. The four stages are:
 
-1: Get operation and increment PC 
-2: Decode the operation 
+1: Get operation and increment PC
+
+2: Decode the operation
+
 3: Get the source and destination for the register files
+
 4: Data memory and ALU
 
 After reset the values are initialized and the processor begins with the instruction fetching and program counter incrementing. A counter bit controls which thread is being processed in the decode stage. Within the decode module the source value and destination relative to the stack pointer is determined, along with the opcode field. These are latched and then used in stage 3 within the main pipelined module. One difficulty is that the operations are no longer all happening in the same place. Each stage needs it’s own case statement for the instructions that are relevant. This makes debugging difficult as a problem could be in different places and the stages need to properly cycle before the testbench can check the register values. 
