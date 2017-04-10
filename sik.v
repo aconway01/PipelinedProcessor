@@ -40,13 +40,11 @@
 `define NOOP    6'b111111
 
 module decode(opin, src, dst, opout);
-	output reg `WORD opout;
-	output reg `WORD dst;
-	output reg `WORD src;
-	input wire `WORD opin;
+input wire `WORD opin;
+output reg `WORD src;
+output reg `WORD dst;
+output reg `WORD opout;
 
-	always @(opin) begin
-	end
 endmodule
 
 module alu(opin, in1, in2, out);
@@ -93,8 +91,7 @@ reg `WORD regfile `REGSIZE;
 reg `WORD memory `MEMSIZE;
 reg `WORD curOP1;
 reg `WORD curOP2;
-reg `WORD opo;
-reg `WORD opi;
+wire `WORD opo;
 
 reg `WORD s1op;
 reg `WORD s2op;
@@ -103,6 +100,9 @@ reg `IMMED12 immed12;
 	
 reg `WORD srcval;
 reg `WORD destval;
+
+wire `WORD s1value;
+wire `WORD d1value;
 	
 reg checkNOOP;
 
@@ -122,7 +122,12 @@ reg `STATE s = `Start;
 		$readmemh1(regfile);
 	end
 
-        decode dd(s1op, srcval, destval, opo);
+        decode dd(s1op, s1value, d1value, opo);
+
+        //Instruction fetching!
+	always@(posedge clk) begin 
+              if (!halt1 && !halt2) begin curOP1 <= memory[pc1]; curOP2 <= memory[pc2]; pc1 <= pc1 +2; pc2 <= pc2 + 2; end
+        end
 
         always@(posedge clk) begin if (!halt1 && !halt2) begin
              if(((clk % 2) === 0) && !halt1) begin
@@ -134,15 +139,14 @@ reg `STATE s = `Start;
            end
         end
 
-	//Instruction fetching!
-	always@(posedge clk) if (!halt1 && !halt2) begin curOP1 <= memory[pc1]; curOP2 <= memory[pc2]; pc1 <= pc1 +2; pc2 <= pc2 + 2; end
+
 	
-	always@(*) begin if (curOP1 != 6'b111111) srcval <= sp1;
-		else srcval <= 0;
+	always@(*) begin if (curOP1 != 6'b111111) srcval = s1value;
+		else srcval = 0;
 	end
 
-	always@(*) begin if (curOP1 != 6'b111111) destval <= sp1-1;
-		else destval <= 0;
+	always@(*) begin if (curOP1 != 6'b111111) destval = d1value;
+		else destval = 0;
 	end
 		
 	always @(posedge clk) begin
