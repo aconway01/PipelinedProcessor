@@ -265,9 +265,8 @@ wire `HALFWORD spout = -1;
 		
        //memory writing
 	always @(posedge clk) if (!halt) begin
-		if (dstval != 0) regfile[{thread_id,dstval}] <= s1cval;
+		if (destval != 0) regfile[{thread_id,destval}] <= srcval;
 		end
-	endmodule
 
 	always @(posedge clk) begin
            if(halt1 && halt2) begin
