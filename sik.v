@@ -101,7 +101,6 @@ always@(opin) begin
                pre = 0;
         end
 
-        // PRE DO HERE
         `OPpre: begin
                 opout = opin[15:12];
                 dst =`NOOP;
@@ -115,28 +114,30 @@ always@(opin) begin
                dst = sp+1;
                src = `NOOP;
                spOut = sp+1;
-        end
-     
-              
+        end     
+
+               
       default: begin opout = `NOOP; src = `NOOP; dst= `NOOP; spOut = sp; end
     endcase
   end
 
 endmodule
 
-module alu(opin, in1, in2, out);
+module alu(opin, in1, in2, out, torf);
 	output reg `WORD out;
 	input wire `OPCODE opin;
 	input wire `WORD in1, in2;
+        output reg torf;
 
 	always@(opin, in1, in2) begin
 		case (opin)
-			`OPadd: begin out = in1 + in2; end
-			`OPand: begin out = in1 & in2; end
-			`OPor: begin out = in1 | in2; end
-			`OPxor: begin out = in1 ^ in2; end
-			`OPsub: begin out = in1 - in2; end
-			default: begin out = in1; end
+			`OPadd: begin out = in1 + in2; torf = 0; end
+			`OPand: begin out = in1 & in2; torf = 0; end
+			`OPor: begin out = in1 | in2; torf = 0; end
+			`OPxor: begin out = in1 ^ in2; torf = 0; end
+			`OPsub: begin out = in1 - in2; torf = 0; end
+                        `OPtest: begin out = `NOOP; torf = (in1 != 0); end
+			default: begin out = in1; torf = 0; end
 		endcase
        end
 
@@ -153,14 +154,15 @@ reg torf2;
 reg halt1;
 reg halt2;
 
-reg loaded1=0;
-reg loaded2=0;
+reg loaded=0;
+
 
 reg `PRE preload1=0;
 reg `PRE preload2=0;
 
 reg `WORD pc1 = 0;
 reg `WORD pc2 = 0;
+reg `WORD pc =0;
 reg `HALFWORD sp1 = -1;
 reg `HALFWORD sp2 = -1;
 
@@ -188,6 +190,9 @@ reg `PRE preReg;
 wire `PRE preOut;
 wire `WORD res;
 
+//for whatever torf we are checking
+wire torfIP;
+
 reg `WORD counter= 0;
 wire `HALFWORD spin =-1;
 wire `HALFWORD spout = -1;
@@ -214,34 +219,49 @@ wire `HALFWORD spout = -1;
 
         always@(posedge clk) begin if (!halt1 && !halt2) begin
              if(((counter % 2) === 0) && !halt1) begin
-                 s1op <= curOP1;       
+                 s1op <= curOP1;
+                 pc <= pc1;       
              end
              else if (!halt2) begin
                  s1op <= curOP2;
+                 pc <= pc2;
              end
            end
            counter <= counter + 1;
         end
 
         decode dd(s1op, s1value, d1value, opo, spin, spout, preOut);
-        alu aa(opo[3:0], regfile[s1value], regfile[d1value], res);
+
+        always@(s1op) begin
+          if(preOut != 0 ) begin loaded = 1; end
+          case(s1op)
+                   //adapted from Sick.v at aggregate.org
+                  `OPjump: begin pc={(loaded ? preOut : s1op[15:12]), s1op `IMMED12}; loaded=0; end
+                  `OPjumpf: begin if (!torfIP) pc={(loaded ? preOut : s1op[15:12]), s1op `IMMED12}; loaded=0;  end
+                  `OPjumpt: begin if (torfIP) pc={(loaded ? preOut : s1op[15:12]), s1op `IMMED12}; loaded=0;  end
+                  default: begin pc <= pc; end
+          endcase
+        end
+
+
+        alu aa(opo[3:0], regfile[s1value], regfile[d1value], res, torfIP);
 
 	//set the source as the result. Otherwise, move forward for module 4.
-	always@(*) begin if (curOP1 != 6'b111111) srcval = res;
+	always@(*) begin if (s1value != 6'b111111) srcval = res;
 		else srcval = s1value;
 	end 
 
-        //set the destination as the result. Otherwise, move forward for module 4.
-	always@(*) begin if (curOP1 != 6'b111111) regfile[destval] =res ;
+        //write the to the register.
+	always@(*) begin if (d1value != 6'b111111) regfile[destval] =res ;
 		else destval = d1value;
 	end
         
        //set the preload
         always@(*) begin if( preOut != 0) begin preReg = preOut; preload1 = 1; end else begin preload1 = 0; end  end
 		
-       //register writing
+       //memory writing
 	always @(posedge clk) if(!halt1 && !halt2) begin
-     
+                 
 	end
 
 	always @(posedge clk) begin
