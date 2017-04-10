@@ -248,7 +248,7 @@ wire `HALFWORD spout = -1;
         end
 
 
-        alu aa(opo[3:0], regfile[s1value], regfile[d1value], res, torfIP);
+        alu aa(opo[3:0], regfile[{thread_id, s1value}], regfile[{thread_id, d1value}], res, torfIP);
 
 	//set the source as the result. Otherwise, move forward for module 4.
 	always@(*) begin if (s1value != 6'b111111) srcval = res;
@@ -256,7 +256,7 @@ wire `HALFWORD spout = -1;
 	end 
 
         //write the to the register.
-	always@(*) begin if (d1value != 6'b111111) regfile[destval] =res ;
+	always@(*) begin if (d1value != 6'b111111) regfile[{thread_id, destval}] =res ;
 		else destval = d1value;
 	end
         
